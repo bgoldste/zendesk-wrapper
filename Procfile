@@ -1,0 +1,1 @@
+manage: python manage.py hello
