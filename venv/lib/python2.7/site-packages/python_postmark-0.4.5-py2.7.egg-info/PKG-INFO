@@ -1,0 +1,17 @@
+Metadata-Version: 1.1
+Name: python-postmark
+Version: 0.4.5
+Summary: Postmark library for Python 2.7 and greater.
+Home-page: http://github.com/themartorana/python-postmark
+Author: Dave Martorana (http://davemartorana.com), Richard Cooper (http://frozenskys.com), Bill Jones (oraclebill), Dmitry Golomidov (deeGraYve)
+Author-email: UNKNOWN
+License: BSD
+Description: Note: To use Python 2.4 or 2.5, please use python-postmark version 0.3.2. Python 2.6 use version 0.4.4.
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Communications :: Email
