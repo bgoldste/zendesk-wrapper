@@ -1,5 +1,5 @@
 requests ==2.5.1
-
+python-postmark>=0.4.3
 Flask==0.10.1
 Flask-Script==2.0.5
 
