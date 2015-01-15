@@ -14,7 +14,7 @@ def hello():
 	message = PMMail(api_key = os.environ.get('POSTMARK_API_TOKEN'),
 	                 subject = "Hello from Postmark",
 	                 sender = "ben@kimonolabs.com",
-	                 to = "dan@kimonolabs.com",
+	                 to = "ben@kimonolabs.com",
 	                 text_body = "Hello",
 	                 tag = "hello")
 
