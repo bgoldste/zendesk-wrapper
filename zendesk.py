@@ -256,11 +256,12 @@ def main():
 	if open_tickets > 10:
 		#send email
 		print "email alert triggered"
+		return True
 	else:
 		print "email alert not triggered"
+		return False
 
 
-main()
 
 
 
