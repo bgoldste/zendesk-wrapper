@@ -28,7 +28,7 @@ def get_ticket_by_id_from_web(tid=1):
 	url = 'https://kimonolabs.zendesk.com/api/v2/tickets/%d.json' % tid
 	#url = 'https://kimonolabs.zendesk.com/api/v2/tickets/recent.json'
 	user = 'ben@kimonolabs.com'
-	pwd = 'k1m1n0'
+	pwd = ''
 	response = requests.get(url, auth=(user, pwd))
 	return response.json()
 
@@ -43,6 +43,18 @@ def get_1000_tickets_from_web(next_time= 1390073264):
 	print url 
 	
 	response = requests.get(url, auth=(user, pwd))
+	if 'error' in response:
+		print 'ERROR ****************'
+		time.sleep(70)
+		response = requests.get(url, auth=(user, pwd))
+		if 'error' in response:
+			print 'ERROR ****************'
+			time.sleep(70)
+			response = requests.get(url, auth=(user, pwd))
+		else:
+			pass
+	else:
+		pass
 
 	try:
 		return response.json()
@@ -129,6 +141,33 @@ def generate_wow():
 	write_1000_tickets_to_db(response, db)
 
 	remove_non_new_tickets(db)
+
+
+def generate_all_time():
+	db = connect_to_db()
+	drop_all_tickets(db)
+
+	response = get_1000_tickets_from_web()
+	print response
+	write_1000_tickets_to_db(response, db)
+
+	# remove_non_new_tickets(db)
+	#int(x['next_page'].split('=')[1])
+	while len(response['results']) == 1000:
+	# if len(response['results']) == 1000:
+		print "1000 results returned, running again"
+		print 'response pre pull', len(response['results'])
+		response = get_1000_tickets_from_web(int(response['next_page'].split('=')[1]))
+		write_1000_tickets_to_db(response, db)
+		try:
+			print 'response post pull', len(response['results'])
+		except:
+			print "******************************"
+			print "*******************************"
+			print response
+	print "less than 1000 tickets returned, end of the line bud"
+	
+
 
 def pull_stats():
 	#make pulling queries easy
@@ -237,6 +276,26 @@ def print_sorted_bugs():
 #generate_wow()
 
 #field_22640804 = pivotal number
+
+
+def get_biz_first_response():
+	db = connect_to_db()
+	total_non_olark = db.tickets.find({ "first_reply_time_in_minutes_within_business_hours": {'$nin': ["", "0"]} }).count()
+	print total_non_olark
+	total_less_than_one = 0
+	for ticket in db.tickets.find({ "first_reply_time_in_minutes_within_business_hours": {'$nin':["", "0"]} }):
+		print  ticket['id'],  ticket["first_reply_time_in_minutes_within_business_hours"]
+		if int(ticket["first_reply_time_in_minutes_within_business_hours"]) <= 60:
+			total_less_than_one += 1
+	print "total less than one,", total_less_than_one
+	print "total", total_non_olark
+	print "percentage",  total_less_than_one / total_non_olark
+
+
+
+
+
+
 def get_open_tickets():
 	db = connect_to_db()
 	
@@ -261,16 +320,39 @@ def main():
 		print "email alert not triggered"
 		return False
 
+#get_biz_first_response()
+
+# generate_wow()
+# get_biz_first_response()
+# print get_function_types()
+
+
+#generate_all_time()
+# generate_wow()
+
+# u'Collection Editor', u'Crawling', u'Crawling::Manual List', u'Crawling::Scheduled', u'Crawling::Source API', u'Crawling::URL Gen',
+#u'Pagination', u'Pagination::Infinite Scroll', u'Pagination::non-url additive', u'Pagination::non-url non-additive', u'Pagination::url based', 
+
+def get_emails():
+	db = connect_to_db()
+
+	import re
+	regx = re.compile("/(Pagination)/i", re.IGNORECASE)
+	# print regx
+	# e = db.tickets.find( {'current_tags':  {'$regex': 'infinite'            }})
+
+	# interested in paid plan e = db.tickets.find({ "field_22639374": "Yes" }, {'req_email':1, '_id':0})
+	e = db.tickets.find({ "field_22824080": "Yes" })
+
+	print e.count()
+	for i in e:
+		print str(i['req_email']) + ', https://kimonolabs.zendesk.com/agent/tickets/' + str(i['id'])
+	return e
 
 
 
-
-
-
-
-
-
-
-
+# e = get_emails()
+# for em in e:
+# 	print em["req_email"]
 
 
